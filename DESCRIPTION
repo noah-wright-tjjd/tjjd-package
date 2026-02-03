@@ -14,6 +14,7 @@ Depends:
   sqldf,
   skimr,
   janitor,
-  GGally
+  GGally,
+  snakecase
 RoxygenNote: 7.3.3
 Encoding: UTF-8
