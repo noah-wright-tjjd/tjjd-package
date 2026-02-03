@@ -1,0 +1,19 @@
+Package: tjjd
+Type: Package
+Title: Simplifies common R queries of TJJD data and metrics
+Version: 1.0.4
+Author: Noah Wright
+Description: Common R queries and functions frequently used at TJJD.
+Depends: 
+  RODBC, 
+  tidyverse,
+  lubridate,
+  readxl,
+  haven,
+  rio,
+  sqldf,
+  skimr,
+  janitor,
+  GGally
+RoxygenNote: 7.3.3
+Encoding: UTF-8
