@@ -1,7 +1,7 @@
 Package: tjjd
 Type: Package
 Title: Simplifies common R queries of TJJD data and metrics
-Version: 1.0.4
+Version: 1.0.5
 Author: Noah Wright
 Description: Common R queries and functions frequently used at TJJD.
 Depends: 

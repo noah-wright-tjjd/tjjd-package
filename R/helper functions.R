@@ -114,8 +114,6 @@ interval_convert.posix <- function(df, start_col, end_col, int_unit, int_length 
 
 }
 
-
-
 state_fy <- function (input_date) {
   if_else(month(input_date) %in% c(9,10,11,12), year(input_date) + 1, year(input_date))
 }
@@ -190,12 +188,35 @@ to_csv <- function(df) {
   write_csv(df, file_path, na = "")
 }
 
-file_df_make <- function(dir) {
+file_directory_df <- function(dir) {
 
-  files_dir <- data.frame(filename = list.files(dir)) |>
-  mutate(filename_no_ext = str_remove_all(filename, "\\..*"),
-         filepath = str_c(dir, filename))
+  files_dir <- data.frame(file_name = list.files(dir)) |>
+    mutate(file_name_no_ext = str_remove_all(filename, "\\..*"),
+           file_path = str_c(dir, filename))
 
   return(files_dir)
+
+}
+
+project_setup <- function(project_name) {
+
+  project_dirs <- c("R/", "input", "output", "data", "reference")
+
+  map(project_dirs, ~dir.create(.x))
+
+  project_scripts <- c("exploratory analysis",
+                       "0. packages and parameters",
+                       "1. load data",
+                       "2. format data",
+                       "3. descriptive analysis",
+                       "4. modeling",
+                       "5. export and viz")
+
+  map(project_scripts, ~file.create("R/", .x, ".R"))
+
+  map(project_scripts, ~writeLines(deparse(substitute(source("R/0. packages and parameters.R"))),
+                                   file(str_c("R/", .x, ".R"))))
+
+  writeLines(c("library(tjjd)", "", "options(scipen = 999)"), file("R/0. packages and parameters.R"))
 
 }
