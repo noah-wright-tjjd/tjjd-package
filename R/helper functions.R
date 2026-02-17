@@ -191,8 +191,8 @@ to_csv <- function(df) {
 file_directory_df <- function(dir) {
 
   files_dir <- data.frame(file_name = list.files(dir)) |>
-    mutate(file_name_no_ext = str_remove_all(filename, "\\..*"),
-           file_path = str_c(dir, filename))
+    mutate(file_name_no_ext = str_remove_all(file_name, "\\..*"),
+           file_path = str_c(dir, file_name))
 
   return(files_dir)
 
