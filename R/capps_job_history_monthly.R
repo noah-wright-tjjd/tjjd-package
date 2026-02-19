@@ -48,9 +48,11 @@ capps_job_history_monthly <- function() {
               end_month = max(end_month),
               position_id = last(position_id),
               name = last(name),
+              date_of_birth = last(date_of_birth),
               job_title = last(job_title),
               facility = last(facility),
               supervisor_position_id = last(supervisor_position_id),
+              department_id = last(department_id),
               hire = max(hire),
               term = max(term)) %>%
     ungroup() %>%
