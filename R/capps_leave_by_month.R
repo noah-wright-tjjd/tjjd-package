@@ -14,7 +14,7 @@ capps_leave_by_month <- function() {
 
   former_leave_by_month <- read_csv("\\\\tjjd4avresaus1\\public\\HR and Analytics\\Leave by Month.csv")
 
-  timecode_lookup <- read_excel("\\\\tjjd4avresaus1\\public\\HR and Analytics\\Lookups\\CAPPS Time Code Lookup.xlsx")
+  timecode_lookup <- read_excel("\\\\tjjd4avresaus1\\public\\HR and Analytics\\Lookups\\capps_time_code_lookup.xlsx")
 
   new_reported_time <- read_excel("\\\\tjjd4avresaus1\\public\\HR and Analytics\\Leave Update.xlsx")
 
@@ -29,20 +29,19 @@ capps_leave_by_month <- function() {
     summarize(hours = sum(quantity)) %>%
     ungroup() %>%
     left_join(timecode_lookup %>%
-                select(trc, time_code_description, on_the_job))
+                select(trc, time_code_description, on_the_job, clock_hours))
 
   leave_by_month <- reported_time_by_month %>%
-    inner_join(timecode_lookup %>%
-                 filter(clock_hours == "y",
-                        on_the_job == "n") %>%
-                 select(trc, time_code_description)) %>%
+    filter(clock_hours == "Y",
+           on_the_job == "N") %>%
     group_by(empl_id, month) %>%
     summarize(hours_leave = sum(hours)) %>%
     ungroup() %>%
     bind_rows(former_leave_by_month) %>%
     arrange(empl_id, month) %>%
     group_by(empl_id, month) %>%
-    summarize_all(first)
+    summarize_all(first) |>
+    ungroup()
 
   return(leave_by_month)
 }

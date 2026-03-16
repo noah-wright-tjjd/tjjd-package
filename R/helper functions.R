@@ -134,7 +134,7 @@ state_fq_date <- function(input_date) {
 }
 
 tjjd_style <- function () {
-  windowsfonts(calibri=windowsfont("calibri"))
+
   font <- "calibri"
   ggplot2::theme(plot.title = ggplot2::element_text(family = font, size = 28, face = "bold", color = "#222222"),
                  plot.subtitle = ggplot2::element_text(family = font, size = 22, margin = ggplot2::margin(9, 0, 9, 0)),
@@ -213,9 +213,6 @@ project_setup <- function(project_name) {
                        "5. export and viz")
 
   map(project_scripts, ~file.create("R/", .x, ".R"))
-
-  map(project_scripts, ~writeLines(deparse(substitute(source("R/0. packages and parameters.R"))),
-                                   file(str_c("R/", .x, ".R"))))
 
   writeLines(c("library(tjjd)", "", "options(scipen = 999)"), file("R/0. packages and parameters.R"))
 
