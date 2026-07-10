@@ -1,7 +1,7 @@
 Package: tjjd
 Type: Package
 Title: Simplifies common R queries of TJJD data and metrics
-Version: 1.0.6
+Version: 1.0.7
 Author: Noah Wright
 Description: Common R queries and functions frequently used at TJJD.
 Depends: 
@@ -16,5 +16,5 @@ Depends:
   janitor,
   GGally,
   snakecase
-RoxygenNote: 7.3.3
 Encoding: UTF-8
+Config/roxygen2/version: 8.0.0

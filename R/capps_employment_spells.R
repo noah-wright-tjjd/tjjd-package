@@ -67,6 +67,8 @@ capps_employment_spells <- function() {
     summarize(position_id = last(posn),
               name = last(name),
               date_of_birth = last(birthdate),
+              sex = last(sex),
+              ethnicity = last(eth_grp),
               job_title = last(functional_job_title),
               facility = last(facility),
               supervisor_position_id = last(rpts_to_posn),
