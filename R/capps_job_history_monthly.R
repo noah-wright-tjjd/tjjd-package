@@ -46,7 +46,7 @@ capps_job_history_monthly <- function() {
     group_by(month, empl_id) %>%
     summarize(start_month = min(start_month),
               end_month = max(end_month),
-              start_date = max(start_date),
+              start_date = min(start_date),
               end_date = max(end_date),
               position_id = last(position_id),
               name = last(name),
