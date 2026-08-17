@@ -115,9 +115,10 @@ from nsg_form_instance_answer_value fiav
 
   if(source == "pact") {
 
+    ird <- ird035_old_connection()
 
-    parental_status_fields<-sqlQuery(noble,
-                                     "select tycno as tjjd_number, mfptr as master_file_pointer_number, pms as parental_status from popmfixed")
+    parental_status_fields_ccs <-sqlQuery(ird,
+                                     "select distinct tycno as tjjd_number, pms as parental_status from popmfixed")
 
     parental_status_lookup<-data.frame(parental_status_code=c('1',
                                                               '2',
@@ -137,10 +138,18 @@ from nsg_form_instance_answer_value fiav
                                                          'Unknown')
     )
 
-    most_recent_parental_status_field<-parental_status_fields %>%
-      group_by(tjjd_number) %>%
-      summarize(parental_status=last(parental_status)) %>%
-      mutate(parental_status=if_else(is.na(parental_status)==true,"?",as.character(parental_status)))
+    parental_status_fields_connect <-sqlQuery(warehouse,
+                                     "select TjjdNumber as tjjd_number, ParentMaritalStatus as parental_status from Connect.StayFinancialInformation SFI
+                                     inner join Connect.vwStay S
+                                     on SFI.StayId = S.StayId")
+
+    parental_marital_status <- parental_status_fields_ccs |>
+      bind_rows(parental_status_fields_connect |>
+                  mutate(parental_status = as.character(parental_status))) |>
+      filter(parental_status == "2" | parental_status == "?") |>
+      mutate(separated_divorced = 0) |>
+      select(-parental_status) |>
+      unique()
 
     extrapolated_matched <- form_instances %>%
       left_join(ace_answers) %>%
@@ -148,7 +157,7 @@ from nsg_form_instance_answer_value fiav
       mutate(answer_id = replace_na(answer_id, 0))
 
     extrapolated_ace_scores <- extrapolated_matched %>%
-      inner_join(most_recent_parental_status_field) %>%
+      left_join(parental_marital_status) %>%
       filter(tolower(form_admin_type) != "pre-screen") |>
       group_by(tjjd_number, form_instance_id, date_completed, form, form_admin_type) %>%
       summarize(emotional_abuse = max(answer_id %in% c(9812, 9814, 10616, 10617, 9799, 10584)),
@@ -159,7 +168,7 @@ from nsg_form_instance_answer_value fiav
                 family_violence = max(answer_id %in% c(9812, 9814, 9815, 10616, 10617, 10618, 9970, 9972, 10803, 10805)),
                 household_substance_abuse = max(answer_id %in% c(9780, 9782, 9788, 9789, 10595, 10597, 10603, 10604)),
                 household_mental_illness = max(answer_id %in% c(9784, 9791, 10599, 10606)),
-                parents_separated_divorced = max(if_else(parental_status!=2&parental_status!='?',1,0)),
+                parents_separated_divorced = min(coalesce(separated_divorced, 1), na.rm = TRUE),
                 incarcerated_household_member = max(answer_id %in% c(9774, 9776, 9777, 9778, 9779, 9849, 9851, 9852, 9853, 9854, 10589, 10591, 10592, 10593, 10594, 10654, 10656, 10657, 10658, 10659))) %>%
       mutate(ace_score = rowSums(across(emotional_abuse:incarcerated_household_member))) |>
       ungroup()
