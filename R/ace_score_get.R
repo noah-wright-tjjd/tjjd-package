@@ -23,6 +23,7 @@ ace_score_get<-function(source = "standard", timeframe = "recent") {
   timeframe <- tolower(timeframe)
 
   noble <- noble_connection()
+  warehouse <- warehouse_connection()
 
   forms<-sqlQuery(noble,
                   "select form_id, page_id, section_id, question_id, answer_id, fo.name as form, pa.name as page, se.name as section, qu.sequence as question_sequence, question_text, answer_text
@@ -115,7 +116,7 @@ from nsg_form_instance_answer_value fiav
 
   if(source == "pact") {
 
-    ird <- ird035_old_connection()
+    ird <- ird035_connection()
 
     parental_status_fields_ccs <-sqlQuery(ird,
                                      "select distinct tycno as tjjd_number, pms as parental_status from popmfixed")
